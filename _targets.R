@@ -33,24 +33,30 @@ p1_targets_list <- list(
     download_nwis_data(site_nums = '01466500'),
   ),
   tar_target(
-    site_data,
-    bind_rows(site_data_01427207, site_data_01432160, site_data_01435000, site_data_01436690, site_data_01466500)
+    site_data_csv,
+    {
+      out_file <- '1_fetch/out/site_data.csv'
+      bind_rows(site_data_01427207, site_data_01432160, site_data_01435000, site_data_01436690, site_data_01466500) %>%
+        readr::write_csv(file = out_file)
+      return(out_file)
+    },
+    format = 'file'
+    
   ),
   tar_target(
-    site_info_csv,
-    nwis_site_info(fileout = "1_fetch/out/site_info.csv", site_data),
-    format = "file"
+    site_info,
+    nwis_site_info(site_data_csv),
   )
 )
 
 p2_targets_list <- list(
   tar_target(
     site_data_clean, 
-    process_data(site_data)
+    process_data(site_data_csv)
   ),
   tar_target(
     site_data_annotated,
-    annotate_data(site_data_clean, site_filename = site_info_csv)
+    annotate_data(site_data_clean, site_filename = site_info)
   ),
   tar_target(
     site_data_styled,

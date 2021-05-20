@@ -16,11 +16,12 @@ download_nwis_data <- function(site_nums){
   return(these_data)
 }
 
-nwis_site_info <- function(fileout, site_data){
+nwis_site_info <- function(site_data_csv){
+  site_data <- readr::read_csv(site_data_csv)
   site_no <- unique(site_data$site_no)
   site_info <- dataRetrieval::readNWISsite(site_no)
-  write_csv(site_info, fileout)
-  return(fileout)
+  #write_csv(site_info, fileout)
+  return(site_info)
 }
 
 
@@ -36,9 +37,9 @@ download_nwis_site_data <- function(filepath, parameterCd = '00010', startDate="
                            parameterCd = parameterCd, startDate = startDate, endDate = endDate)
 
   # -- simulating a failure-prone web-sevice here, do not edit --
-  if (sample(c(T,F,F,F), 1)){
-    stop(site_num, ' has failed due to connection timeout. Try scmake() again')
-  }
+  #if (sample(c(T,F,F,F), 1)){
+  #  stop(site_num, ' has failed due to connection timeout. Try scmake() again')
+  #}
   # -- end of do-not-edit block
   
   #write_csv(data_out, path = filepath)
